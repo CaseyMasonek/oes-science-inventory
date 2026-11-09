@@ -4,7 +4,7 @@ import {Input} from "@/components/ui/input";
 import {useState} from "react";
 import {useDebounce} from "use-debounce";
 
-export default function DisplayData({items}: { items: { data : any[] } })
+export default function DisplayData({items}: { items: { data : any } })
 {
     const [searchTerm,setSearchTerm] = useState<string>('')
     const [searchValue] = useDebounce(searchTerm, 500)
