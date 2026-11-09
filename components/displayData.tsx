@@ -4,7 +4,17 @@ import {Input} from "@/components/ui/input";
 import {useState} from "react";
 import {useDebounce} from "use-debounce";
 
-export default function DisplayData({items}: { items: { data : {id: string, name: string, room: string, drawer_label: string, notes: string[] } [] } })
+type ItemsResponse = {
+    data: {
+        id: string;
+        name: string;
+        room: string;
+        drawer_label: string;
+        notes: string[];
+    }[] | null;
+};
+
+export default function DisplayData({items}: { items: { data : ItemsResponse } })
 {
     const [searchTerm,setSearchTerm] = useState<string>('')
     const [searchValue] = useDebounce(searchTerm, 500)
@@ -16,7 +26,7 @@ export default function DisplayData({items}: { items: { data : {id: string, name
                 <Input placeholder={"Search..."} className={"bg-white w-1/2 scale-150"} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
             <div className={"grid grid-cols-3"}>
-                {items.data?.map((item) => (
+                {items.data.map((item) => (
                     <>{item.name?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
                         <div key={item.id} className={"py-4 p-5 hover:bg-accent border-b-1 border-r-1 border-dotted"}>
                             <b>{item.name}</b>
