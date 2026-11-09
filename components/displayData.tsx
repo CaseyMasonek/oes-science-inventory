@@ -5,19 +5,21 @@ import {useState} from "react";
 import {useDebounce} from "use-debounce";
 
 type ItemsResponse = {
-    data: {
+    items: {data: {
         id: string;
         name: string;
         room: string;
         drawer_label: string;
         notes: string[];
-    }[] | null;
+    }[] | null};
 };
 
-export default function DisplayData({items}: { items: { data : ItemsResponse } })
+export default function DisplayData(itemsResponse: ItemsResponse)
 {
     const [searchTerm,setSearchTerm] = useState<string>('')
     const [searchValue] = useDebounce(searchTerm, 500)
+
+    const items = itemsResponse?.items.data ?? [];
 
     return (
         <div>
@@ -26,7 +28,7 @@ export default function DisplayData({items}: { items: { data : ItemsResponse } }
                 <Input placeholder={"Search..."} className={"bg-white w-1/2 scale-150"} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
             <div className={"grid grid-cols-3"}>
-                {items.data.map((item) => (
+                {items.map((item) => (
                     <>{item.name?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
                         <div key={item.id} className={"py-4 p-5 hover:bg-accent border-b-1 border-r-1 border-dotted"}>
                             <b>{item.name}</b>
@@ -38,7 +40,7 @@ export default function DisplayData({items}: { items: { data : ItemsResponse } }
                     }</>
                 ))}
             </div>
-            {(items.data?.filter((item) => (item.name.toLowerCase()?.indexOf(searchValue.toLowerCase()) !== -1))).length == 0 &&
+            {(items.filter((item) => (item.name.toLowerCase()?.indexOf(searchValue.toLowerCase()) !== -1))).length == 0 &&
                 <div className={"w-full h-[70vh] flex justify-center items-center"}><p className={"p-3 text-2xl"}>No results.</p></div>}
         </div>
     )
