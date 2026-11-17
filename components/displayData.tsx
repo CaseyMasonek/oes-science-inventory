@@ -1,8 +1,9 @@
 "use client"
 
 import {Input} from "@/components/ui/input";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
+import {createClient} from "@/lib/supabase/client";
 
 type ItemsResponse = {
     items: {data: {
@@ -14,12 +15,32 @@ type ItemsResponse = {
     }[] | null};
 };
 
-export default function DisplayData(itemsResponse: ItemsResponse)
+export default function DisplayData()
 {
     const [searchTerm,setSearchTerm] = useState<string>('')
     const [searchValue] = useDebounce(searchTerm, 500)
 
-    const items = itemsResponse?.items.data ?? [];
+    const [items,setItems] = useState([]);
+
+    const supabase = createClient()
+
+    useEffect(() => {
+        (async () => {
+            supabase.from('items')
+                .select('*')
+                .ilike('name',`%${searchValue}%`)
+                .limit(100)
+                .then(({ data, error }) => {
+                if (error) {
+                    console.error('Supabase error:', error);
+                    return;
+                }
+                console.log(data, "!");
+                // @ts-ignore
+                    setItems(data ?? []);
+            });
+        })()
+    },[searchValue,supabase])
 
     return (
         <div>
