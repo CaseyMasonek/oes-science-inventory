@@ -5,14 +5,14 @@ import {useEffect, useState} from "react";
 import {useDebounce} from "use-debounce";
 import {createClient} from "@/lib/supabase/client";
 
-type ItemsResponse = {
-    items: {data: {
-        id: string;
-        name: string;
-        room: string;
-        drawer_label: string;
-        notes: string[];
-    }[] | null};
+type Item = {
+    id: string;
+    name: string;
+    room: string;
+    drawer_label: string;
+    notes: string[];
+    link: string;
+    sds: string;
 };
 
 export default function DisplayData()
@@ -20,7 +20,7 @@ export default function DisplayData()
     const [searchTerm,setSearchTerm] = useState<string>('')
     const [searchValue] = useDebounce(searchTerm, 500)
 
-    const [items,setItems] = useState([]);
+    const [items,setItems] = useState<Item[]>([]);
 
     const supabase = createClient()
 
@@ -50,15 +50,16 @@ export default function DisplayData()
             </div>
             <div className={"grid grid-cols-3"}>
                 {items.map((item) => (
-                    <>{item.name?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
-                        <div key={item.id} className={"py-4 p-5 hover:bg-accent border-b-1 border-r-1 border-dotted"}>
-                            <b>{item.name}</b>
+                    <div key={item.id}>{item.name?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
+                        <div className={"py-4 p-5 hover:bg-accent border-b-1 border-r-1 border-dotted"}>
+                            <a href={item.link} className={(item.link != null ? "not-hover:underline" : "")}><b>{item.name}</b></a>
                             <p>{item.room} {item.drawer_label && (<em>
                                 - {item.drawer_label}
                             </em>)}</p>
                             <p className={"mt-2"}>{item.notes}</p>
+                            {item.sds && <a href={item.sds} className={"not-hover:underline"}>SDS</a>}
                         </div>
-                    }</>
+                    }</div>
                 ))}
             </div>
             {(items.filter((item) => (item.name.toLowerCase()?.indexOf(searchValue.toLowerCase()) !== -1))).length == 0 &&
