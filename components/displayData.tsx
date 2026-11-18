@@ -58,7 +58,6 @@ export default function DisplayData()
                             <p>{item.room} {item.drawer_label && (<em>
                                 - {item.drawer_label}
                             </em>)}</p>
-                            <p className={"mt-2"}>{item.notes}</p>
                             {item.sds &&
                                 <div>
                                     <a href={item.sds} className={"not-hover:underline"}>SDS</a>
