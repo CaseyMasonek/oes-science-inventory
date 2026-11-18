@@ -13,6 +13,7 @@ type Item = {
     notes: string[];
     link: string;
     sds: string;
+    checkout_required: boolean;
 };
 
 export default function DisplayData()
@@ -45,19 +46,31 @@ export default function DisplayData()
     return (
         <div>
             <div className={"p-3 h-[30vh] bg-[#2a644a] flex flex-col items-center justify-center space-y-15"}>
+                <a className={"absolute right-3 top-3 not-hover:underline text-white text-xl"} href={"https://docs.google.com/forms/d/e/1FAIpQLSdXVAqZ36jPFHp982LtSWkzyCHIZlgkuDppshWzrNgg4HcR1A/viewform"}>SIP Equipment/Supplies/Chemical Pull Request</a>
                 <h1 className={"text-5xl text-white"}>OES Science Inventory</h1>
                 <Input placeholder={"Search..."} className={"bg-white w-1/2 scale-150"} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
             <div className={"grid grid-cols-3"}>
                 {items.map((item) => (
                     <div key={item.id}>{item.name?.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
-                        <div className={"py-4 p-5 hover:bg-accent border-b-1 border-r-1 border-dotted"}>
+                        <div className={"py-4 p-5 hover:bg-accent h-30 border-b-1 border-r-1 border-dotted"}>
                             <a href={item.link} className={(item.link != null ? "not-hover:underline" : "")}><b>{item.name}</b></a>
                             <p>{item.room} {item.drawer_label && (<em>
                                 - {item.drawer_label}
                             </em>)}</p>
                             <p className={"mt-2"}>{item.notes}</p>
-                            {item.sds && <a href={item.sds} className={"not-hover:underline"}>SDS</a>}
+                            {item.sds &&
+                                <div>
+                                    <a href={item.sds} className={"not-hover:underline"}>SDS</a>
+                                    <br />
+                                    <a href={"https://sites.google.com/oes.edu/oes-science-research/upcoming-trainings?authuser=1"} className={"not-hover:underline"}>Chemical Safety Training Required</a>
+                                </div>
+                            }
+                            {item.checkout_required &&
+                                <div>
+                                    <a href={"https://sites.google.com/oes.edu/oes-science-research/general-resources/laboratory-equipment?authuser=1"} className={"not-hover:underline"}>Checkout Form</a>
+                                </div>
+                            }
                         </div>
                     }</div>
                 ))}
